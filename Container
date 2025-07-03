@@ -1,0 +1,38 @@
+First copy the docker pull command from the docker hub
+
+docker pull gitlab/gitlab-ce
+
+Once the docker pull command runs successfully, you should have the GitLab docker image on your local machine by inspecting using this command.
+
+docker image ls | grep gitlab-ce
+
+Run GitLab Container from Docker Image
+
+docker run -d -p 8000:80 gitlab/gitlab-ce
+
+Try to visit http://localhost:8000 after around 5 minutes, you could see a 502 response . This means that the container is running. 
+Everything is fine with the container but the GitLab server inside that container is not ready yet to accept requests.
+
+First get the details of the running container using the following command.
+docker ps | grep gitlab-ce
+
+Default user name is root
+
+In order to get pasword paste below command
+docker exec -it 6befb2ecb255 cat /etc/gitlab/initial_root_password
+
+Copy the password 
+acces localhost:8000
+Enter User name and Password
+
+If you want to be safe in case of any disaster or for any reason the container may be deleted, you need to start your GitLab container 
+by attaching a docker volume where the docker volume will permanently save the data from the GitLab container.
+
+Stop your running container, delete it and retry using the following command.
+
+docker run -p 8000:80 \
+           -v ./gitlab/config:/etc/gitlab \
+           -v ./gitlab/data:/var/opt/gitlab \
+      gitlab/gitlab-ce
+
+**********************************************************************************************************************************************
